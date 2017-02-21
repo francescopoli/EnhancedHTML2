@@ -61,6 +61,18 @@ HTML page more standalone. To provide an embedded style sheet, use
 the -CSSStyleSheet parameter.
 
 
+.PARAMETER customHeader
+A valid well formed raw HTML list of pointers to external stylers\frameworks
+to customize page. Refer to external components documentation about the 
+HTML code required to import components
+    
+    $externalStyle=@"
+        <link href="https://url/path/version/css/StyleSheet.min.css" rel="stylesheet">
+        <script src="https://url/path/version/js/FrameworkCode.min.js" crossorigin="anonymous"></script>
+    "@
+    -customHeader $externalStyle
+
+
 .PARAMETER Title
 A plain-text title that will be displayed in the Web browser's window
 title bar. Note that not all browsers will display this.
@@ -100,6 +112,7 @@ available at http://powershell.org/ebooks.
         [string]$jQueryDataTableURI = 'http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables.min.js',
         [Parameter(ParameterSetName='CSSContent')][string[]]$CssStyleSheet,
         [Parameter(ParameterSetName='CSSURI')][string[]]$CssUri,
+        [string[]]$customHeader="<!--no custom scripts and CSS-->",
         [string]$Title = 'Report',
         [string]$PreContent,
         [string]$PostContent,
@@ -120,7 +133,7 @@ available at http://powershell.org/ebooks.
     if ($PSBoundParameters.ContainsKey('CssStyleSheet')) {
         $stylesheet = "<style>$CssStyleSheet</style>" | Out-String
     }
-
+   
 
     <#
         Create the HTML tags for the page title, and for
@@ -183,7 +196,7 @@ available at http://powershell.org/ebooks.
         produce the other bits of the page.
     #>
     Write-Verbose "Producing final HTML"
-    ConvertTo-HTML -Head "$stylesheet`n$titletag`n$script`n$datatable" -Body $body  
+    ConvertTo-HTML -Head "$stylesheet`n$titletag`n$script`n$customHeader`n$datatable" -Body $body 
     Write-Debug "Finished producing final HTML"
 
 
