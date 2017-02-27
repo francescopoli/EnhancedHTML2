@@ -672,7 +672,18 @@ to help visually indicate that the section can be toggled.
             $out += "`n$PostContent"
         }
         Write-Verbose "Done"
-        $out += "</tbody></table></div>"
+        <#
+            If input was list type there is no <tbody> opened, 
+            so no need to close it, or generally speaking
+            no open, no closure.
+        #>
+        if ($out -match "<tbody>") {
+            $out += "</tbody></table></div>"
+        }
+        else {
+            $out += "</table></div>"
+        }
+
         Write-Output $out
     }
 }
